@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Build TDLib
-RUN git clone --depth 1 --branch master https://github.com/tdlib/tdlib.git /opt/tdlib \
+RUN git clone --depth 1 --branch master https://github.com/tdlib/td.git /opt/tdlib \
     && mkdir -p /opt/tdlib/build \
     && cd /opt/tdlib/build \
     && cmake -DCMAKE_BUILD_TYPE=Release .. \
