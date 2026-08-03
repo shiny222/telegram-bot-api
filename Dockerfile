@@ -22,6 +22,6 @@ WORKDIR /data
 EXPOSE 8081
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
-    CMD curl -sf http://127.0.0.1:8081/ || exit 1
+    CMD curl -sS -o /dev/null http://127.0.0.1:8081/ || exit 1
 
 CMD ["sh", "-c", "exec telegram-bot-api --local --api-id=\"$TELEGRAM_API_ID\" --api-hash=\"$TELEGRAM_API_HASH\" --http-port=\"${TELEGRAM_API_HTTP_PORT:-8081}\""]
