@@ -5,7 +5,7 @@
 # =============================================================================
 
 # -------------------------- Builder Stage ------------------------------------
-FROM debian:bookworm-slim AS builder
+FROM ubuntu:24.04 AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TELEGRAM_API_REF=adfd7f6a8e990272851777eeb3ae0def4216f161
@@ -44,13 +44,14 @@ RUN git clone --depth 1 --branch master https://github.com/tdlib/telegram-bot-ap
     && cmake --build . --target telegram-bot-api -j$(nproc)
 
 # -------------------------- Runtime Stage ------------------------------------
-FROM debian:bookworm-slim AS runtime
+FROM ubuntu:24.04 AS runtime
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
-    libssl3 \
+    curl \
+    libssl3t64 \
     libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -70,4 +71,4 @@ EXPOSE 8081
 HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -sf http://127.0.0.1:8081/ || exit 1
 
-CMD ["telegram-bot-api", "--local", "--api-id=${TELEGRAM_API_ID}", "--api-hash=${TELEGRAM_API_HASH}", "--http-port=8081"]
+CMD ["sh", "-c", "exec telegram-bot-api --local --api-id=\"$TELEGRAM_API_ID\" --api-hash=\"$TELEGRAM_API_HASH\" --http-port=\"${TELEGRAM_API_HTTP_PORT:-8081}\""]
